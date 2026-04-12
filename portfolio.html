@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jane Doe — Photography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --off-white: #f7f6f4;
+      --stone: #e8e5e0;
+      --mid: #9a9590;
+      --dark: #2a2825;
+      --accent: #c8a96e;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Jost', sans-serif;
+      --nav-h: 72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      background: var(--white);
+      color: var(--dark);
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--dark);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, background 0.2s;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid var(--dark);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.4s cubic-bezier(.16,1,.3,1), width 0.3s, height 0.3s, opacity 0.3s;
+      transform: translate(-50%, -50%);
+      opacity: 0.5;
+    }
+    body:has(.photo-item:hover) .cursor-ring {
+      width: 64px; height: 64px; opacity: 0.2;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    nav.scrolled { border-bottom-color: var(--stone); }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      color: var(--dark);
+    }
+    .nav-logo span { font-style: italic; color: var(--accent); }
+
+    .nav-links {
+      display: flex; gap: 40px; list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--mid);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--dark); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: flex-end;
+      padding: 0 48px 80px;
+      position: relative;
+      overflow: hidden;
+      background: var(--off-white);
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero-bg-img {
+      background: var(--stone);
+      overflow: hidden;
+    }
+    .hero-bg-img:first-child {
+      /* Simulate a photo — replace background with your actual image */
+      background: linear-gradient(160deg, #d4cfc9 0%, #b8b2aa 100%);
+    }
+    .hero-bg-img:last-child {
+      background: var(--off-white);
+    }
+
+    /* Placeholder photo panels — replace these with real <img> tags */
+    .hero-photo {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+    .hero-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--mid); font-size: 12px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 680px;
+    }
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 8vw, 96px);
+      font-weight: 300;
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      color: var(--dark);
+      margin-bottom: 28px;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+
+    .hero-sub {
+      font-size: 14px; font-weight: 300;
+      color: var(--mid); letter-spacing: 0.06em;
+      line-height: 1.8;
+      max-width: 360px;
+      margin-bottom: 48px;
+    }
+
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: 11px; font-weight: 400; letter-spacing: 0.2em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--dark);
+      border-bottom: 1px solid var(--dark);
+      padding-bottom: 4px;
+      transition: gap 0.3s, color 0.2s;
+    }
+    .hero-cta:hover { gap: 22px; color: var(--accent); border-bottom-color: var(--accent); }
+    .hero-cta .arrow { font-size: 16px; }
+
+    /* SECTION LABELS */
+    .section-label {
+      font-size: 10px; font-weight: 400; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--mid);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::after {
+      content: ''; flex: 0 0 40px; height: 1px; background: var(--stone);
+    }
+
+    /* GALLERY */
+    #work {
+      padding: 120px 48px;
+    }
+    .gallery-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 64px;
+    }
+    .gallery-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+    }
+
+    .gallery-filters {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .filter-btn {
+      font-size: 10px; font-weight: 400; letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: 1px solid var(--stone);
+      background: none;
+      padding: 8px 18px;
+      border-radius: 40px;
+      cursor: none;
+      color: var(--mid);
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--dark); color: var(--white); border-color: var(--dark);
+    }
+
+    /* Masonry-style grid */
+    .gallery-grid {
+      columns: 3;
+      column-gap: 16px;
+    }
+    @media (max-width: 900px) { .gallery-grid { columns: 2; } }
+    @media (max-width: 560px) { .gallery-grid { columns: 1; } }
+
+    .photo-item {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      overflow: hidden;
+      position: relative;
+      cursor: none;
+    }
+    .photo-placeholder {
+      width: 100%;
+      display: block;
+      background: var(--stone);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.6s cubic-bezier(.16,1,.3,1);
+    }
+    .photo-item:hover .photo-placeholder { transform: scale(1.02); }
+
+    .photo-placeholder::after {
+      content: attr(data-label);
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(42,40,37,0.35);
+    }
+
+    /* Photo info overlay */
+    .photo-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 20px 18px 18px;
+      background: linear-gradient(to top, rgba(42,40,37,0.7) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .photo-item:hover .photo-overlay { opacity: 1; }
+    .photo-title-overlay {
+      font-family: var(--font-display);
+      font-size: 16px; font-weight: 300;
+      color: var(--white); letter-spacing: 0.03em;
+    }
+    .photo-cat {
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+    }
+
+    /* ABOUT */
+    #about {
+      padding: 120px 48px;
+      background: var(--off-white);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    @media (max-width: 768px) { #about { grid-template-columns: 1fr; gap: 48px; } }
+
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-portrait {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--stone);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--mid); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    /* Replace .about-portrait with an <img> */
+    .about-portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+    .about-accent {
+      position: absolute; bottom: -24px; right: -24px;
+      width: 120px; height: 120px;
+      border: 1px solid var(--accent);
+      z-index: -1;
+    }
+
+    .about-text {}
+    .about-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 300; line-height: 1.15;
+      margin-bottom: 32px;
+    }
+    .about-title em { font-style: italic; color: var(--accent); }
+
+    .about-body {
+      font-size: 14px; line-height: 1.9; color: var(--mid);
+      margin-bottom: 24px;
+    }
+
+    .about-stats {
+      display: flex; gap: 40px; margin-top: 48px;
+      padding-top: 40px; border-top: 1px solid var(--stone);
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 40px; font-weight: 300;
+      color: var(--dark); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid);
+    }
+
+    /* SERVICES */
+    #services {
+      padding: 120px 48px;
+    }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+      margin-top: 64px; border: 1px solid var(--stone);
+    }
+    @media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } }
+
+    .service-card {
+      padding: 48px 40px;
+      border-right: 1px solid var(--stone);
+      transition: background 0.3s;
+    }
+    .service-card:last-child { border-right: none; }
+    .service-card:hover { background: var(--off-white); }
+
+    .service-num {
+      font-family: var(--font-display);
+      font-size: 48px; font-weight: 300;
+      color: var(--stone); line-height: 1;
+      margin-bottom: 24px;
+    }
+    .service-name {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .service-desc {
+      font-size: 13px; line-height: 1.8; color: var(--mid);
+    }
+
+    /* CONTACT */
+    #contact {
+      padding: 120px 48px;
+      background: var(--dark); color: var(--white);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    }
+    @media (max-width: 768px) { #contact { grid-template-columns: 1fr; gap: 48px; } }
+
+    .contact-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 300; line-height: 1.1;
+      margin-top: 24px;
+    }
+    .contact-title em { font-style: italic; color: var(--accent); }
+
+    .contact-info { margin-top: 48px; }
+    .contact-info a {
+      display: block;
+      font-size: 13px; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none; margin-bottom: 12px;
+      transition: color 0.2s;
+    }
+    .contact-info a:hover { color: var(--accent); }
+
+    /* Form */
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+
+    .form-field {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .form-field label {
+      font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+      background: rgba(255,255,255,0.05);
+      border: none; border-bottom: 1px solid rgba(255,255,255,0.15);
+      color: var(--white);
+      font-family: var(--font-body); font-size: 14px; font-weight: 300;
+      padding: 12px 0;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+      cursor: none;
+    }
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus { border-bottom-color: var(--accent); }
+    .form-field textarea { resize: none; height: 100px; }
+    .form-field select option { background: var(--dark); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .submit-btn {
+      margin-top: 8px;
+      display: inline-flex; align-items: center; gap: 16px;
+      font-family: var(--font-body); font-size: 11px; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      background: none; border: none; border-bottom: 1px solid var(--accent);
+      color: var(--accent); padding-bottom: 4px;
+      cursor: none; align-self: flex-start;
+      transition: gap 0.3s;
+    }
+    .submit-btn:hover { gap: 24px; }
+
+    /* FOOTER */
+    footer {
+      padding: 32px 48px;
+      background: var(--dark);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy {
+      font-size: 11px; color: rgba(255,255,255,0.25); letter-spacing: 0.1em;
+    }
+    .footer-socials { display: flex; gap: 24px; }
+    .footer-socials a {
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: var(--accent); }
+
+    /* Fade-in animations */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(42,40,37,0.96);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-inner { position: relative; max-width: 80vw; max-height: 85vh; }
+    .lightbox-img {
+      max-width: 80vw; max-height: 80vh;
+      object-fit: contain; display: block;
+    }
+    .lightbox-placeholder {
+      width: 60vw; max-width: 900px;
+      aspect-ratio: 3/2; background: #3a3835;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.2); font-size: 12px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .lightbox-close {
+      position: fixed; top: 32px; right: 40px;
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4); background: none; border: none; cursor: none;
+      transition: color 0.2s;
+    }
+    .lightbox-close:hover { color: var(--white); }
+    .lightbox-caption {
+      margin-top: 16px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .lightbox-title {
+      font-family: var(--font-display); font-size: 18px; font-weight: 300;
+      color: var(--white); letter-spacing: 0.03em;
+    }
+    .lightbox-num {
+      font-size: 11px; letter-spacing: 0.15em; color: rgba(255,255,255,0.3);
+    }
+    .lightbox-nav {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); background: none; border: none; cursor: none;
+      transition: color 0.2s; padding: 16px;
+    }
+    .lightbox-nav:hover { color: var(--white); }
+    .lb-prev { left: 20px; }
+    .lb-next { right: 20px; }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Navigation -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">Jane <span>Doe</span></a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-bg-img">
+        <!-- Replace with: <img src="your-hero-photo.jpg" class="hero-photo" alt="Hero photo"> -->
+        <div class="hero-placeholder">Your hero photo here</div>
+      </div>
+      <div class="hero-bg-img"></div>
+    </div>
+    <div class="hero-content reveal">
+      <p class="hero-eyebrow">Portrait &amp; Editorial Photographer</p>
+      <h1 class="hero-title">Capturing<br><em>light,</em><br>life &amp; feeling.</h1>
+      <p class="hero-sub">Based in Montréal. Available worldwide for editorial, portrait, and commercial work.</p>
+      <a href="#work" class="hero-cta">View portfolio <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section id="work">
+    <div class="gallery-header reveal">
+      <div>
+        <p class="section-label">Portfolio</p>
+        <h2 class="gallery-title">Selected work</h2>
+      </div>
+      <div class="gallery-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="portrait">Portrait</button>
+        <button class="filter-btn" data-filter="editorial">Editorial</button>
+        <button class="filter-btn" data-filter="landscape">Landscape</button>
+      </div>
+    </div>
+
+    <div class="gallery-grid">
+      <!-- Photo items. Replace .photo-placeholder with an <img> tag.
+           Set data-category to match your filter buttons.
+           Set data-title to the photo name. -->
+
+      <div class="photo-item" data-category="portrait" data-title="Golden Hour Portrait">
+        <div class="photo-placeholder" style="padding-top:133%" data-label="Portrait — 3:4"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Golden Hour Portrait</div>
+            <div class="photo-cat">Portrait</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="landscape" data-title="Morning Fog">
+        <div class="photo-placeholder" style="padding-top:66%" data-label="Landscape — 3:2"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Morning Fog</div>
+            <div class="photo-cat">Landscape</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="editorial" data-title="Editorial — Vogue">
+        <div class="photo-placeholder" style="padding-top:125%" data-label="Editorial — 4:5"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Editorial — Vogue</div>
+            <div class="photo-cat">Editorial</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="portrait" data-title="Street Portrait">
+        <div class="photo-placeholder" style="padding-top:100%" data-label="Portrait — 1:1"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Street Portrait</div>
+            <div class="photo-cat">Portrait</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="editorial" data-title="Fashion Week">
+        <div class="photo-placeholder" style="padding-top:150%" data-label="Editorial — 2:3"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Fashion Week</div>
+            <div class="photo-cat">Editorial</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="landscape" data-title="Coastal Light">
+        <div class="photo-placeholder" style="padding-top:75%" data-label="Landscape — 4:3"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Coastal Light</div>
+            <div class="photo-cat">Landscape</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="portrait" data-title="Studio Series #3">
+        <div class="photo-placeholder" style="padding-top:133%" data-label="Portrait — 3:4"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Studio Series #3</div>
+            <div class="photo-cat">Portrait</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="editorial" data-title="Campaign — Autumn">
+        <div class="photo-placeholder" style="padding-top:100%" data-label="Editorial — 1:1"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Campaign — Autumn</div>
+            <div class="photo-cat">Editorial</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-item" data-category="landscape" data-title="Winter Silence">
+        <div class="photo-placeholder" style="padding-top:66%" data-label="Landscape — 3:2"></div>
+        <div class="photo-overlay">
+          <div>
+            <div class="photo-title-overlay">Winter Silence</div>
+            <div class="photo-cat">Landscape</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="about-img-wrap reveal">
+      <!-- Replace with: <img src="your-portrait.jpg" alt="Jane Doe"> -->
+      <div class="about-portrait">Your portrait here</div>
+      <div class="about-accent"></div>
+    </div>
+    <div class="reveal">
+      <p class="section-label">About</p>
+      <h2 class="about-title">Light is the <em>medium.</em><br>Emotion is the subject.</h2>
+      <p class="about-body">
+        I'm Jane Doe, a portrait and editorial photographer based in Montréal. For over a decade I've been drawn to the quiet, honest moments between poses — the exhale, the glance, the unguarded second.
+      </p>
+      <p class="about-body">
+        My work has appeared in Vogue, The New York Times Magazine, and exhibited across North America and Europe. I work with artists, brands, and individuals who value imagery that feels true.
+      </p>
+      <div class="about-stats">
+        <div>
+          <div class="stat-num">12+</div>
+          <div class="stat-label">Years</div>
+        </div>
+        <div>
+          <div class="stat-num">340+</div>
+          <div class="stat-label">Projects</div>
+        </div>
+        <div>
+          <div class="stat-num">18</div>
+          <div class="stat-label">Countries</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="reveal">
+      <p class="section-label">Services</p>
+      <h2 class="gallery-title">What I offer</h2>
+    </div>
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <div class="service-num">01</div>
+        <div class="service-name">Portrait Sessions</div>
+        <p class="service-desc">Individual, couple, and family portraiture. Studio or on-location. I create images that feel like you, not like a photo.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">02</div>
+        <div class="service-name">Editorial & Fashion</div>
+        <p class="service-desc">Campaign shoots, lookbooks, and magazine editorials. Full production support available, or I integrate seamlessly with your existing team.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-num">03</div>
+        <div class="service-name">Commercial</div>
+        <p class="service-desc">Brand photography, product campaigns, and corporate portraiture. Imagery that communicates who you are with clarity and beauty.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="reveal">
+      <p class="section-label" style="color:rgba(255,255,255,0.3)">Contact</p>
+      <h2 class="contact-title">Let's make something <em>beautiful.</em></h2>
+      <div class="contact-info">
+        <a href="mailto:hello@janedoe.com">hello@janedoe.com</a>
+        <a href="tel:+15141234567">+1 (514) 123-4567</a>
+        <a href="#">@janedoephoto — Instagram</a>
+      </div>
+    </div>
+    <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-field">
+          <label>First name</label>
+          <input type="text" placeholder="Jane" required>
+        </div>
+        <div class="form-field">
+          <label>Last name</label>
+          <input type="text" placeholder="Smith" required>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" placeholder="jane@example.com" required>
+      </div>
+      <div class="form-field">
+        <label>Project type</label>
+        <select>
+          <option value="">Select one...</option>
+          <option>Portrait session</option>
+          <option>Editorial / Fashion</option>
+          <option>Commercial</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Message</label>
+        <textarea placeholder="Tell me about your project..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send message <span>→</span></button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p class="footer-copy">© 2026 Jane Doe. All rights reserved.</p>
+    <div class="footer-socials">
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Behance</a>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">Close ✕</button>
+    <button class="lightbox-nav lb-prev" onclick="navLightbox(-1)">← Prev</button>
+    <button class="lightbox-nav lb-next" onclick="navLightbox(1)">Next →</button>
+    <div class="lightbox-inner">
+      <div class="lightbox-placeholder" id="lbContent">Photo</div>
+      <div class="lightbox-caption">
+        <span class="lightbox-title" id="lbTitle">Title</span>
+        <span class="lightbox-num" id="lbNum">1 / 9</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    });
+    function animRing() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animRing);
+    }
+    animRing();
+
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+    // Hero reveal on load
+    setTimeout(() => document.querySelector('.hero .reveal')?.classList.add('visible'), 100);
+
+    // Gallery filter
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.photo-item').forEach(item => {
+          const show = filter === 'all' || item.dataset.category === filter;
+          item.style.opacity = show ? '1' : '0.15';
+          item.style.pointerEvents = show ? 'auto' : 'none';
+          item.style.transition = 'opacity 0.4s';
+        });
+      });
+    });
+
+    // Lightbox
+    const photos = Array.from(document.querySelectorAll('.photo-item'));
+    let currentIdx = 0;
+
+    function openLightbox(idx) {
+      currentIdx = idx;
+      const item = photos[idx];
+      document.getElementById('lbTitle').textContent = item.dataset.title || '';
+      document.getElementById('lbNum').textContent = (idx + 1) + ' / ' + photos.length;
+      document.getElementById('lbContent').textContent = item.dataset.title || 'Photo';
+      document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+    function navLightbox(dir) {
+      currentIdx = (currentIdx + dir + photos.length) % photos.length;
+      openLightbox(currentIdx);
+    }
+
+    photos.forEach((item, i) => {
+      item.addEventListener('click', () => openLightbox(i));
+    });
+    document.getElementById('lightbox').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeLightbox();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') navLightbox(1);
+      if (e.key === 'ArrowLeft') navLightbox(-1);
+    });
+
+    // Contact form
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.submit-btn');
+      btn.textContent = 'Message sent ✓';
+      btn.style.color = '#c8a96e';
+      setTimeout(() => { btn.innerHTML = 'Send message <span>→</span>'; btn.style.color = ''; e.target.reset(); }, 3000);
+    }
+  </script>
+</body>
+</html>
