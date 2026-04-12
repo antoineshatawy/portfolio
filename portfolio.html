@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jane Doe — Photography</title>
+  <title>Antoine Shatawy's Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --white: #ffffff;
-      --off-white: #f7f6f4;
-      --stone: #e8e5e0;
-      --mid: #9a9590;
-      --dark: #2a2825;
-      --accent: #c8a96e;
-      --font-display: 'Cormorant Garamond', Georgia, serif;
-      --font-body: 'Jost', sans-serif;
+      --off-white: #ffffff;
+      --stone: #ebebeb;
+      --mid: #999999;
+      --dark: #1a1a1a;
+      --accent: #1a1a1a;
+      --font-display: 'Space Mono', monospace;
+      --font-body: 'Space Mono', monospace;
       --nav-h: 72px;
     }
 
@@ -34,27 +34,31 @@
     /* Custom cursor */
     .cursor {
       position: fixed;
-      width: 8px; height: 8px;
+      width: 6px; height: 6px;
       background: var(--dark);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9999;
       transition: transform 0.15s ease, background 0.2s;
       transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 1px #000000;
     }
     .cursor-ring {
       position: fixed;
       width: 36px; height: 36px;
-      border: 1px solid var(--dark);
+      border: none;
+      background: rgba(26,26,26,0.1);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9998;
-      transition: transform 0.4s cubic-bezier(.16,1,.3,1), width 0.3s, height 0.3s, opacity 0.3s;
+      transition: transform 0.4s cubic-bezier(.16,1,.3,1), width 0.3s, height 0.3s, opacity 0.3s, filter 0.3s;
       transform: translate(-50%, -50%);
       opacity: 0.5;
+      filter: blur(2px);
+      box-shadow: 0 0 15px rgba(26,26,26,0.3);
     }
     body:has(.photo-item:hover) .cursor-ring {
-      width: 64px; height: 64px; opacity: 0.2;
+      width: 64px; height: 64px; opacity: 0.2; filter: blur(4px);
     }
 
     /* NAV */
@@ -72,14 +76,14 @@
     nav.scrolled { border-bottom-color: var(--stone); }
 
     .nav-logo {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 300;
-      letter-spacing: 0.04em;
+      height: 60px;
+      width: auto;
       text-decoration: none;
       color: var(--dark);
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
-    .nav-logo span { font-style: italic; color: var(--accent); }
 
     .nav-links {
       display: flex; gap: 40px; list-style: none;
@@ -99,68 +103,64 @@
     /* HERO */
     .hero {
       min-height: 100vh;
-      display: flex; align-items: flex-end;
-      padding: 0 48px 80px;
-      position: relative;
-      overflow: hidden;
-      background: var(--off-white);
-    }
-
-    .hero-bg {
-      position: absolute; inset: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .hero-bg-img {
-      background: var(--stone);
-      overflow: hidden;
-    }
-    .hero-bg-img:first-child {
-      /* Simulate a photo — replace background with your actual image */
-      background: linear-gradient(160deg, #d4cfc9 0%, #b8b2aa 100%);
-    }
-    .hero-bg-img:last-child {
-      background: var(--off-white);
-    }
-
-    /* Placeholder photo panels — replace these with real <img> tags */
-    .hero-photo {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      opacity: 0.85;
-    }
-    .hero-placeholder {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--mid); font-size: 12px; letter-spacing: 0.1em;
-      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: #ffffff;
+      padding: 0 48px;
     }
 
     .hero-content {
-      position: relative; z-index: 2;
-      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
     }
-    .hero-eyebrow {
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 20px;
-    }
+
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(56px, 8vw, 96px);
-      font-weight: 300;
+      font-size: clamp(64px, 10vw, 120px);
+      font-weight: 400;
       line-height: 1.0;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.02em;
       color: var(--dark);
-      margin-bottom: 28px;
+      transition: color 0.75s ease-in-out, text-shadow 0.75s ease-in-out;
     }
-    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-title span {
+      display: inline-block;
+      animation: fadeIn 0.75s ease forwards;
+      opacity: 0;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+    .hero-title span:hover {
+     text-shadow: 0 0 15px currentColor;
+    }
 
-    .hero-sub {
-      font-size: 14px; font-weight: 300;
-      color: var(--mid); letter-spacing: 0.06em;
+
+    /* Real signature image — drop in your PNG */
+    .hero-signature {
+      width: clamp(160px, 22vw, 280px);
+      opacity: 0.85;
+      display: block;
+    }
+
+    /* Placeholder shown until you add your PNG */
+    .hero-signature-placeholder {
+      width: clamp(200px, 28vw, 340px);
+      height: 90px;
+      border: 1px dashed var(--stone);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .hero-signature-placeholder span {
+      font-size: 11px;
       line-height: 1.8;
-      max-width: 360px;
-      margin-bottom: 48px;
+      letter-spacing: 0.05em;
+      color: var(--mid);
+      text-align: center;
     }
 
     .hero-cta {
@@ -170,9 +170,9 @@
       color: var(--dark);
       border-bottom: 1px solid var(--dark);
       padding-bottom: 4px;
-      transition: gap 0.3s, color 0.2s;
+      transition: gap 0.3s, opacity 0.2s;
     }
-    .hero-cta:hover { gap: 22px; color: var(--accent); border-bottom-color: var(--accent); }
+    .hero-cta:hover { gap: 22px; opacity: 0.5; }
     .hero-cta .arrow { font-size: 16px; }
 
     /* SECTION LABELS */
@@ -274,7 +274,7 @@
     /* ABOUT */
     #about {
       padding: 120px 48px;
-      background: var(--off-white);
+      background: #ffffff;
       display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
     }
     @media (max-width: 768px) { #about { grid-template-columns: 1fr; gap: 48px; } }
@@ -298,13 +298,12 @@
       border: 1px solid var(--accent);
       z-index: -1;
     }
-
-    .about-text {}
     .about-title {
       font-family: var(--font-display);
       font-size: clamp(32px, 4vw, 48px);
       font-weight: 300; line-height: 1.15;
       margin-bottom: 32px;
+      text-align: center;
     }
     .about-title em { font-style: italic; color: var(--accent); }
 
@@ -454,6 +453,11 @@
     }
     .reveal.visible { opacity: 1; transform: none; }
 
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     /* Lightbox */
     .lightbox {
       position: fixed; inset: 0; z-index: 1000;
@@ -512,7 +516,7 @@
 
   <!-- Navigation -->
   <nav id="nav">
-    <a href="#" class="nav-logo">Jane <span>Doe</span></a>
+    <a href="portfolio.html"><img src="images/Signature.png" alt="Signature" class="nav-logo"></a>
     <ul class="nav-links">
       <li><a href="#work">Work</a></li>
       <li><a href="#about">About</a></li>
@@ -523,17 +527,8 @@
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-bg">
-      <div class="hero-bg-img">
-        <!-- Replace with: <img src="your-hero-photo.jpg" class="hero-photo" alt="Hero photo"> -->
-        <div class="hero-placeholder">Your hero photo here</div>
-      </div>
-      <div class="hero-bg-img"></div>
-    </div>
     <div class="hero-content reveal">
-      <p class="hero-eyebrow">Portrait &amp; Editorial Photographer</p>
-      <h1 class="hero-title">Capturing<br><em>light,</em><br>life &amp; feeling.</h1>
-      <p class="hero-sub">Based in Montréal. Available worldwide for editorial, portrait, and commercial work.</p>
+      <h1 class="hero-title"><span>A</span><span>n</span><span>t</span><span>o</span><span>i</span><span>n</span><span>e</span><span>&nbsp;</span><span>S</span><span>h</span><span>a</span><span>t</span><span>a</span><span>w</span><span>y</span></h1>
       <a href="#work" class="hero-cta">View portfolio <span class="arrow">→</span></a>
     </div>
   </section>
@@ -714,7 +709,7 @@
       <p class="section-label" style="color:rgba(255,255,255,0.3)">Contact</p>
       <h2 class="contact-title">Let's make something <em>beautiful.</em></h2>
       <div class="contact-info">
-        <a href="mailto:hello@janedoe.com">hello@janedoe.com</a>
+        <a href="/cdn-cgi/l/email-protection#1179747d7d7e517b707f74757e743f727e7c"><span class="__cf_email__" data-cfemail="147c7178787b547e757a71707b713a777b79">[email&#160;protected]</span></a>
         <a href="tel:+15141234567">+1 (514) 123-4567</a>
         <a href="#">@janedoephoto — Instagram</a>
       </div>
@@ -776,7 +771,7 @@
     </div>
   </div>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Cursor
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
@@ -786,11 +781,26 @@
       cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
     });
     function animRing() {
-      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      rx += (mx - rx) * 0.28; ry += (my - ry) * 0.28;
       ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
       requestAnimationFrame(animRing);
     }
     animRing();
+
+    // Change cursor color on clickable items
+    const clickable = document.querySelectorAll('a, button, input, textarea, select, .photo-item');
+    clickable.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.background = '#00ff00';
+        ring.style.background = 'rgba(0,255,0,0.1)';
+        ring.style.boxShadow = '0 0 15px rgba(0,255,0,0.3)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.background = 'var(--dark)';
+        ring.style.background = 'rgba(26,26,26,0.1)';
+        ring.style.boxShadow = '0 0 15px rgba(26,26,26,0.3)';
+      });
+    });
 
     // Nav scroll
     const nav = document.getElementById('nav');
@@ -806,6 +816,42 @@
     reveals.forEach(el => observer.observe(el));
     // Hero reveal on load
     setTimeout(() => document.querySelector('.hero .reveal')?.classList.add('visible'), 100);
+
+    // Random fade in for title letters
+    const titleSpans = Array.from(document.querySelectorAll('.hero-title span'));
+    // Shuffle the array for random order
+    for (let i = titleSpans.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [titleSpans[i], titleSpans[j]] = [titleSpans[j], titleSpans[i]];
+    }
+    // Assign constant rate delays
+    titleSpans.forEach((span, i) => {
+      span.style.animationDelay = (i * 0.1) + 's';
+    });
+
+    // Flash green after fade in
+    setTimeout(() => {
+      const title = document.querySelector('.hero-title');
+      title.style.color = '#66ff66';
+      title.style.textShadow = '0 0 15px #66ff66, 0 0 30px #66ff66, 0 0 45px #66ff66';
+      setTimeout(() => {
+        title.style.color = 'var(--dark)';
+        title.style.textShadow = '';
+      }, 1100);
+    }, 2200);
+
+    // Random colour on hover
+    document.querySelectorAll('.hero-title span').forEach(span => {
+    span.addEventListener('mouseenter', () => {
+    const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+    span.style.color = color;
+    span.style.textShadow = `0 0 15px ${color}`;
+        });
+    span.addEventListener('mouseleave', () => {
+    span.style.color = '';
+    span.style.textShadow = '';
+        });
+    });
 
     // Gallery filter
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -858,9 +904,14 @@
     function handleSubmit(e) {
       e.preventDefault();
       const btn = e.target.querySelector('.submit-btn');
-      btn.textContent = 'Message sent ✓';
-      btn.style.color = '#c8a96e';
-      setTimeout(() => { btn.innerHTML = 'Send message <span>→</span>'; btn.style.color = ''; e.target.reset(); }, 3000);
+      btn.textContent = 'Sending...';
+      // Simulate send (replace with actual form handling)
+      setTimeout(() => {
+        btn.textContent = 'Sent!';
+        setTimeout(() => {
+          btn.innerHTML = 'Send message <span>→</span>';
+        }, 2000);
+      }, 1000);
     }
   </script>
 </body>
