@@ -576,12 +576,15 @@
         align-items: flex-start;
         gap: 24px;
         margin-bottom: 40px;
-        overflow: visible;
+        overflow: hidden;
+        width: 100%;
       }
     }
     @media (max-width: 768px) {
       .gallery-filters {
         width: 100%;
+        max-width: 100%;
+        flex-wrap: nowrap;
         padding-bottom: 4px;
       }
     }
