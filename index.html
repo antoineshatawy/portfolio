@@ -228,6 +228,11 @@
 
     .gallery-filters {
       display: flex; gap: 8px; align-items: center;
+       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .gallery-filters::-webkit-scrollbar {
+      display: none; /* hides scrollbar on Chrome/Safari */
     }
     .filter-btn {
       font-size: 10px; font-weight: 400; letter-spacing: 0.18em;
@@ -570,6 +575,12 @@
         align-items: flex-start;
         gap: 24px;
         margin-bottom: 40px;
+      }
+    }
+    @media (max-width: 768px) {
+      .gallery-filters {
+        width: 100%;
+        padding-bottom: 4px;
       }
     }
     @media (hover: none) {
