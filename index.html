@@ -87,7 +87,7 @@
     }
     nav.scrolled { border-bottom-color: var(--stone); }
 
-
+    
     .nav-logo {
       height: 60px;
       width: auto;
@@ -227,13 +227,18 @@
 
 
     .gallery-filters {
-      display: flex; gap: 8px; align-items: center;
-       -webkit-overflow-scrolling: touch;
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      gap: 8px;
+      align-items: center;
       scrollbar-width: none;
-      touch-action: pan-x;
     }
     .gallery-filters::-webkit-scrollbar {
-      display: none; /* hides scrollbar on Chrome/Safari */
+      display: none;
     }
     .filter-btn {
       font-size: 10px; font-weight: 400; letter-spacing: 0.18em;
